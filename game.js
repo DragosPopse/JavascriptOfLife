@@ -8,7 +8,7 @@ function createGrid(rows, cols) {
 
 class Game {
     constructor() {
-        this._timeStep = 1000 / 15;
+        this._timeStep = 1000 / 2;
         this._canvas = document.createElement("canvas");
         this._context = this._canvas.getContext("2d");
         this._rows = 10;
@@ -16,10 +16,12 @@ class Game {
         this._cellSize = 40;
         this._aliveColor = "green";
         this._grid = createGrid(this._rows, this._cols);
+        this._nextGrid = createGrid(this._rows, this._cols);
 
         for (let i = 0; i < this._cols; i++) {
             for (let j = 0; j < this._rows; j++) {
-                this._grid[i][j] = Math.round(Math.random());
+                this._grid[i][j] = 0;
+                this._nextGrid[i][j] = 0;
             }
         }
 
@@ -43,10 +45,10 @@ class Game {
         let gridX = Math.floor(x / this._cellSize);
         let gridY = Math.floor(y / this._cellSize);
 
-        if (this._grid[gridX][gridY] == 0) {
-            this._grid[gridX][gridY] = 1;
+        if (this._nextGrid[gridX][gridY] == 0) {
+            this._nextGrid[gridX][gridY] = 1;
         } else {
-            this._grid[gridX][gridY] = 0;
+            this._nextGrid[gridX][gridY] = 0;
         }
         
         this.draw();
@@ -67,11 +69,13 @@ class Game {
     }
 
     tick() {
+        this.computeNextGeneration();
         this.draw();
     }
 
     draw() {
         this.clear();
+        this.swapGrids();
 
         for (let i = 0; i < this._cols + 1; i++) {
             this._context.moveTo(i * this._cellSize, 0);
@@ -99,5 +103,54 @@ class Game {
 
     clear() {
         this._context.clearRect(0, 0, this._canvas.width, this._canvas.height);
+    }
+
+    swapGrids() {
+        for (let i = 0; i < this._cols; i++) {
+            for (let j = 0; j < this._rows; j++) {
+                this._grid[i][j] = this._nextGrid[i][j];
+            }
+        }
+    }
+
+    computeNextGeneration() {
+        for (let i = 0; i < this._cols; i++) {
+            for (let j = 0; j < this._cols; j++) {
+                let sum = this.computeNeighbours(i, j);
+                if (this._grid[i][j] == 1) {
+                    if (sum < 2) {
+                        this._nextGrid[i][j] = 0;
+                    } else if (sum <= 3) {
+                        this._nextGrid[i][j] = 1;
+                    } else {
+                        this._nextGrid[i][j] = 0;
+                    }
+                } else {
+                    if (sum == 3) {
+                        this._nextGrid[i][j] = 1;
+                    } else {
+                        this._nextGrid[i][j] = 0;
+                    }
+                }
+            }
+        }
+    }
+
+    computeNeighbours(x, y) {
+        let sum = 0;
+        for (let i = -1; i < 2; i++) {
+            for (let j = -1; j < 2; j++) {
+                let nbX = i + x;
+                let nbY = j + y;
+
+                //check if neighbour exists
+                if (nbX >= 0 && nbX < this._cols && nbY >= 0 && nbY < this._rows) {
+                    sum += this._grid[nbX][nbY];
+                }
+            }
+        }
+
+        sum -= this._grid[x][y];
+        return sum;
     }
 }
