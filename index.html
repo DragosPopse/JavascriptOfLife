@@ -10,6 +10,22 @@
         <script>
             let game = new Game();
         </script>
-        <button onclick='game.play()'>CLICK</button>
+
+        <button id="playButton">Play</button>
+        <script>
+            let playButton = document.getElementById("playButton");
+            let isPlay = true;
+            playButton.onclick = function() {
+                if (isPlay) {
+                    isPlay = false;
+                    this.innerHTML = "Pause";
+                    game.play();
+                } else {
+                    isPlay = true;
+                    this.innerHTML = "Play";
+                    game.stop();
+                }
+            }
+        </script>
     </body>
 </html>

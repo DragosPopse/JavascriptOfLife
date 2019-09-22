@@ -17,6 +17,11 @@ class Game {
         this._aliveColor = "green";
         this._grid = createGrid(this._rows, this._cols);
         this._nextGrid = createGrid(this._rows, this._cols);
+        this._running = false;
+
+        this._hovering = false;
+        this._hoverX = 0;
+        this._hoverY = 0;
 
         for (let i = 0; i < this._cols; i++) {
             for (let j = 0; j < this._rows; j++) {
@@ -34,6 +39,9 @@ class Game {
     }
 
     onCanvasClick(event) {
+        if (this._running) {
+            return;
+        }
         let rect = this._canvas.getBoundingClientRect();
         let x = event.clientX - rect.left;
         let y = event.clientY - rect.top;
@@ -65,7 +73,13 @@ class Game {
     }
 
     play() {
-        setInterval(this.tick.bind(this), this._timeStep);
+        this._running = true;
+        this._loopId = setInterval(this.tick.bind(this), this._timeStep);
+    }
+
+    stop() {
+        this._running = false;
+        clearInterval(this._loopId);
     }
 
     tick() {
