@@ -26,7 +26,30 @@ class Game {
         document.body.appendChild(this._canvas);
 
         this.resize();
-        window.addEventListener("resize", this.resize);
+        window.addEventListener("resize", this.resize.bind(this));
+
+        this._canvas.addEventListener("click", this.onCanvasClick.bind(this));
+    }
+
+    onCanvasClick(event) {
+        let rect = this._canvas.getBoundingClientRect();
+        let x = event.clientX - rect.left;
+        let y = event.clientY - rect.top;
+
+        if (x > this._cellSize * this._cols || y > this._cellSize * this._rows) {
+            return;
+        }
+
+        let gridX = Math.floor(x / this._cellSize);
+        let gridY = Math.floor(y / this._cellSize);
+
+        if (this._grid[gridX][gridY] == 0) {
+            this._grid[gridX][gridY] = 1;
+        } else {
+            this._grid[gridX][gridY] = 0;
+        }
+        
+        this.draw();
     }
     
     resize() {
@@ -35,6 +58,8 @@ class Game {
 
         this._canvas.width = w;
         this._canvas.height = h;
+
+        this.draw();
     }
 
     play() {
