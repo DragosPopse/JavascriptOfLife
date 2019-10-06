@@ -5,10 +5,10 @@
         <script type="text/javascript" src="jquery.js"></script>
         <script type="text/javascript" src="game.js"></script>
     </head>
-
+    
     <body>
         <script>
-            let game = new Game();
+            let game
         </script>
 
         <button id="playButton">Play</button>
@@ -25,6 +25,20 @@
                     this.innerHTML = "Play";
                     game.stop();
                 }
+            }
+        </script>
+
+        <input id="rowsInput" value="Rows">
+        <input id="colsInput" value="Cols">
+        <button id ="createGridButton">Create Grid</button>
+        <script>
+            let createGridButton = document.getElementById("createGridButton");
+            createGridButton.onclick = function() {
+                let rowsInput = document.getElementById("rowsInput");
+                let colsInput = document.getElementById("colsInput");
+                let rows = parseInt(rowsInput.value);
+                let cols = parseInt(colsInput.value);
+                game = new Game(rows, cols);
             }
         </script>
     </body>

@@ -7,12 +7,12 @@ function createGrid(rows, cols) {
 }
 
 class Game {
-    constructor() {
+    constructor(rows, cols) {
         this._timeStep = 1000 / 2;
         this._canvas = document.createElement("canvas");
         this._context = this._canvas.getContext("2d");
-        this._rows = 10;
-        this._cols = 10;
+        this._rows = rows;
+        this._cols = cols;
         this._cellSize = 40;
         this._aliveColor = "green";
         this._grid = createGrid(this._rows, this._cols);
